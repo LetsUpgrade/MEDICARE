@@ -5,6 +5,9 @@ import 'package:medicare/rounded_button.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:medicare/screens/medi_home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:medicare/services/auth.dart';
+import 'package:medicare/services/database.dart';
 
 
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -17,11 +20,19 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance ;
+
+  final CollectionReference _collectionReference = Firestore.instance
+      .collection('users');
+  final AuthService _authService = AuthService();
+
   bool showSpinner = false;
   String email;
   String password;
   String name;
-  String age;
+  int age;
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +73,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               TextField(
 
                 textAlign: TextAlign.center,
+                keyboardType: TextInputType.number,
                 onChanged: (value) {
                   //Do something with the user input.
-                  age = value;
+                  age = int.parse(value);
                 },
                 decoration: kTextFieldDecoration.copyWith(hintText: "Enter your Age"),
               ),
@@ -102,14 +114,53 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     showSpinner = true;
                   });
                   try {
-                    final newUser = await _auth.createUserWithEmailAndPassword(
-                        email: email, password: password);
-                    if(newUser != null){
+
+                    AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+                    FirebaseUser user = result.user;
+
+
+                    _collectionReference.document(user.uid).setData({
+                      'name': name,
+                      'email': email,
+                      'age': age
+                    }).then((value){
+                      print("Successful");
+                      setState(() {
+                        showSpinner = false;
+                      });
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context) => MediHome()));
+                    }).catchError((error) {
+                      print("Failed to add user: $error");
+
+                    });
+
+
+
+
+
+                    /*
+                    dynamic result = _authService.registerWithEmaillAndPassword(email, password);
+
+                    if(result != null){
+                      print("RESULT"+result);
+
+                      DatabaseService _database = DatabaseService(uid:result.uid);
+
+                     dynamic response = _database.updateUserData(name, email, age);
+
+
+                      print(result);
+
+
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => MediHome()));
                     }
-                    setState(() {
-                      showSpinner = false;
-                    });
+
+                    else{
+                      print("result null");
+                    }
+                    */
+
+
                   }
                   catch (e){
                     print(e);

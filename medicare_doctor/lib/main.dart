@@ -3,6 +3,9 @@ import 'package:medicare_doctor/screens/chat.dart';
 import 'package:medicare_doctor/screens/doctor_appointments.dart';
 import 'package:medicare_doctor/screens/home.dart';
 
+import 'screens/home.dart';
+import 'screens/login_page.dart';
+
 void main() {
   runApp(MedicareD());
 }
@@ -16,7 +19,7 @@ class MedicareD extends StatelessWidget {
         primaryColor: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: ChatScreen(),
+      home: LoginScreen(),
     );
   }
 }

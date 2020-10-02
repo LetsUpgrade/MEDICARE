@@ -1,3 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:medicare/models/doctor.dart';
+import 'package:medicare/screens/doctor_info_screen.dart';
+import 'package:provider/provider.dart';
+
 import 'category.dart';
 
 import 'package:flutter/material.dart';
@@ -25,6 +30,36 @@ class _PopularListViewState extends State<PopularListView>
     return true;
   }
 
+
+
+  //class UserInformation extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    CollectionReference users = Firestore.instance.collection('doctors');
+    final doctors = Provider.of<List<Doctor>>(context) ?? [];
+
+    return ListView.builder(
+        itemCount: doctors.length,
+        itemBuilder : (context,index){
+          return BrewListTile(doctor:doctors[index]);
+        }
+    );
+  }
+
+
+
+
+
+
+
+//}
+
+
+
+
+
+
+/*
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -39,6 +74,8 @@ class _PopularListViewState extends State<PopularListView>
               padding: const EdgeInsets.all(8),
               physics: const BouncingScrollPhysics(),
               scrollDirection: Axis.vertical,
+              //starting of the list view
+
               children: List<Widget>.generate(
                 Category.popularList.length,
                 (int index) {
@@ -74,7 +111,165 @@ class _PopularListViewState extends State<PopularListView>
       ),
     );
   }
+
+ */
+
 }
+
+class BrewListTile extends StatelessWidget {
+
+  final Doctor doctor;
+  BrewListTile({this.doctor});
+
+  @override
+  Widget build(BuildContext context) {
+    return
+      /*
+      Padding(
+      padding: EdgeInsets.only(top:16.0),
+
+      child: Card(
+        margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
+        child: ListTile(
+          leading: CircleAvatar(
+            radius: 25.0,
+            //backgroundColor: Colors.brown[doctor.strength],
+            //backgroundImage: AssetImage('assets/coffee_icon.png'),
+          ),
+          title: Text(doctor.name),
+          subtitle: Text('Takes ${doctor.experience} sugar(s)'),
+        ),
+      ),
+       */
+      Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(
+                top: 16, left: 16, right: 16),
+            child: Text(
+              doctor.name,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                letterSpacing: 0.27,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+                top: 8,
+                left: 16,
+                right: 16,
+                bottom: 8),
+            child: Row(
+              mainAxisAlignment:
+              MainAxisAlignment
+                  .spaceBetween,
+              crossAxisAlignment:
+              CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  '${doctor.experience} years',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w200,
+                    fontSize: 12,
+                    letterSpacing: 0.27,
+                    color: Colors.black,
+                  ),
+                ),
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        '${doctor.rating}',
+                        textAlign:
+                        TextAlign.left,
+                        style: TextStyle(
+                          fontWeight:
+                          FontWeight.w200,
+                          fontSize: 18,
+                          letterSpacing: 0.27,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Icon(
+                        Icons.star,
+                        color:
+                        Colors.blueAccent,
+                        size: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+                top: 8,
+                left: 16,
+                right: 16,
+                bottom: 8),
+            child: Row(
+              children: <Widget>[
+                Text(
+                  '${doctor.specialist}',
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w200,
+                    fontSize: 12,
+                    letterSpacing: 0.27,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+            ),
+            child: Row(
+              children: <Widget>[
+                FlatButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                    BorderRadius.circular(
+                        10.0),
+                  ),
+                  onPressed: () {
+                    Navigator.push(context, new MaterialPageRoute(builder: (context) =>  DoctorInfoScreen(doctor: doctor)));
+                    //Navigator.of(context).push(MaterialPageRoute(builder: (context) => DoctorInfoScreen()));
+
+                  },
+                  child: Text(
+                    'Appointment',
+                    style: TextStyle(
+                        color: Colors.white),
+                  ),
+                  color: Colors.blueAccent,
+                )
+              ],
+            ),
+          ),
+        ],
+      );
+
+
+  }
+}
+
+
+
+
+
+
+
 
 class CategoryView extends StatelessWidget {
   const CategoryView(
