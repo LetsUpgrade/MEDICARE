@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:medicare/screens/home.dart';
+import 'package:medicare/screens/login_page.dart';
 import 'package:medicare/screens/medi_home.dart';
 import 'package:medicare/screens/ordermedicine.dart';
+import 'package:medicare/screens/register_screen.dart';
 
 
 
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Home(),
+      home: LoginScreen(),
     );
   }
 }

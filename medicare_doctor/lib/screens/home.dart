@@ -45,7 +45,7 @@ class Home extends StatelessWidget {
                       10.0),
                 ),
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage()));
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginScreen()));
                 },
                 child: Text('Get Started'),
                 color: Colors.blue,

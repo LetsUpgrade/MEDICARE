@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:medicare/screens/medi_home.dart';
-import 'package:medicare/screens/register_screen.dart';
-import 'package:medicare/rounded_button.dart';
+import 'package:flutter/services.dart';
 import 'package:medicare/constants.dart';
+import 'package:medicare/rounded_button.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:medicare/screens/medi_home.dart';
+
 
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
-class LoginScreen extends StatefulWidget {
-  static const String id = 'login_screen';
+class RegistrationScreen extends StatefulWidget {
+  static const String id = 'registration_screen';
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegistrationScreenState createState() => _RegistrationScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final _auth = FirebaseAuth.instance;
+class _RegistrationScreenState extends State<RegistrationScreen> {
+  final _auth = FirebaseAuth.instance ;
   bool showSpinner = false;
   String email;
   String password;
+  String name;
+  String age;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Flexible(
               //   child: Hero(
               //     tag: 'logo',
-              //     child:Container(
+              //     child: Container(
               //       height: 200.0,
               //       child: Image.asset('images/logo.png'),
               //     ),
@@ -42,6 +46,30 @@ class _LoginScreenState extends State<LoginScreen> {
               // ),
               SizedBox(
                 height: 48.0,
+              ),
+              TextField(
+
+                textAlign: TextAlign.center,
+                onChanged: (value) {
+                  //Do something with the user input.
+                  name = value;
+                },
+                decoration: kTextFieldDecoration.copyWith(hintText: "Enter your Name"),
+              ),
+              SizedBox(
+                height: 8.0,
+              ),
+              TextField(
+
+                textAlign: TextAlign.center,
+                onChanged: (value) {
+                  //Do something with the user input.
+                  age = value;
+                },
+                decoration: kTextFieldDecoration.copyWith(hintText: "Enter your Age"),
+              ),
+              SizedBox(
+                height: 8.0,
               ),
               TextField(
                 keyboardType: TextInputType.emailAddress,
@@ -56,26 +84,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 8.0,
               ),
               TextField(
-                  obscureText: true,
-                  textAlign: TextAlign.center,
-                  onChanged: (value) {
-                    //Do something with the user input.
-                    password = value;
-                  },
-                  decoration: kTextFieldDecoration.copyWith(hintText: "Enter your password")
+                obscureText: true,
+                textAlign: TextAlign.center,
+                onChanged: (value) {
+                  //Do something with the user input.
+                  password = value;
+                },
+                decoration: kTextFieldDecoration.copyWith(hintText: "Enter your password"),
               ),
               SizedBox(
                 height: 24.0,
               ),
               RoundedButton(
-                title: "Log In",
-                onPressed: () async {
+                title: "Register",
+                onPressed: () async{
                   setState(() {
                     showSpinner = true;
                   });
-                  try{
-                    final user =await _auth.signInWithEmailAndPassword(email: email, password: password);
-                    if(user != null){
+                  try {
+                    final newUser = await _auth.createUserWithEmailAndPassword(
+                        email: email, password: password);
+                    if(newUser != null){
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => MediHome()));
                     }
                     setState(() {
@@ -85,15 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   catch (e){
                     print(e);
                   }
-                },
-                color: Colors.lightBlueAccent,
 
-
-              ),
-              RoundedButton(
-                title: "Register",
-                onPressed: (){
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => RegistrationScreen()));
                 },
                 color: Colors.lightBlueAccent,
 
