@@ -5,6 +5,11 @@ import 'package:medicare_doctor/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:medicare_doctor/services/auth.dart';
+import 'package:medicare_doctor/services/database.dart';
+
+
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import 'doctor_appointments.dart';
@@ -17,11 +22,18 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _auth = FirebaseAuth.instance ;
+
+  final CollectionReference _collectionReference = Firestore.instance
+      .collection('doctors');
+  final AuthService _authService = AuthService();
+
   bool showSpinner = false;
   String email;
   String password;
   String name;
-  String age;
+  String specialist;
+  int experience;
+  int rating = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +60,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 48.0,
               ),
               TextField(
-                keyboardType: TextInputType.emailAddress,
+
                 textAlign: TextAlign.center,
                 onChanged: (value) {
                   //Do something with the user input.
@@ -60,11 +72,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 8.0,
               ),
               TextField(
-                obscureText: true,
                 textAlign: TextAlign.center,
                 onChanged: (value) {
                   //Do something with the user input.
-                  password = value;
+                  specialist = value;
                 },
                 decoration: kTextFieldDecoration.copyWith(hintText: "Enter your Specialist"),
               ),
@@ -72,11 +83,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 8.0,
               ),
               TextField(
-                obscureText: true,
+
                 textAlign: TextAlign.center,
+                keyboardType: TextInputType.number,
                 onChanged: (value) {
                   //Do something with the user input.
-                  password = value;
+                  experience = int.parse(value);
                 },
                 decoration: kTextFieldDecoration.copyWith(hintText: "Enter your Experience"),
               ),
@@ -84,11 +96,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 8.0,
               ),
               TextField(
-                obscureText: true,
+                keyboardType: TextInputType.emailAddress,
                 textAlign: TextAlign.center,
                 onChanged: (value) {
                   //Do something with the user input.
-                  password = value;
+                  email = value;
                 },
                 decoration: kTextFieldDecoration.copyWith(hintText: "Enter your email"),
               ),
@@ -114,14 +126,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     showSpinner = true;
                   });
                   try {
-                    final newUser = await _auth.createUserWithEmailAndPassword(
-                        email: email, password: password);
-                    if(newUser != null){
+                    AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+                    FirebaseUser user = result.user;
+
+
+                    _collectionReference.document(user.uid).setData({
+                      'name': name,
+
+                      'experience': experience,
+                      'specialist': specialist,
+                      'rating': rating
+                    }).then((value){
+                      print("Successful");
+                      setState(() {
+                        showSpinner = false;
+                      });
                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => DoctorAppointment()));
-                    }
-                    setState(() {
-                      showSpinner = false;
+                    }).catchError((error) {
+                      print("Failed to add user: $error");
+
                     });
+
                   }
                   catch (e){
                     print(e);

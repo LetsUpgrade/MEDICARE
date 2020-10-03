@@ -266,26 +266,36 @@ class DoctorInfoScreen extends StatefulWidget {
                                             final FirebaseUser user = await FirebaseAuth.instance.currentUser();
                                             final userid = user.uid;
 
-                                            final CollectionReference _collectionReference = Firestore.instance
-                                                .collection('appointments');
+                                            final DocumentReference document =   Firestore.instance.collection("users").document(userid);
 
-                                            _collectionReference.document(user.uid).setData({
-                                              //doctor details
-                                              'docName' : doctor.name,
-                                              'docSpecialization' : doctor.specialist,
+                                            await document.get().then<dynamic>(( DocumentSnapshot snapshot) async{
+                                              print("User name "+snapshot.data['name']);
 
-                                              //patient details
-                                              'patUid' : userid,
-                                              //timings
-                                              'time': _value,
+                                              final CollectionReference _collectionReference = Firestore.instance
+                                                  .collection('appointments');
 
-                                            }).then((value) {
-                                              print("Successful");
+                                              _collectionReference.document(user.uid).setData({
+                                                //doctor details
+                                                'docName' : doctor.name,
+                                                'docSpecialization' : doctor.specialist,
+
+                                                //patient details
+                                                'patUid' : userid,
+                                                'patName' : snapshot.data['name'],
+                                                //timings
+                                                'time': _value,
+
+                                              }).then((value) {
+                                                print("Successful");
 
 
-                                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatScreen()));
+                                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatScreen()));
+
+                                              });
 
                                             });
+
+
 
 
                                           }
