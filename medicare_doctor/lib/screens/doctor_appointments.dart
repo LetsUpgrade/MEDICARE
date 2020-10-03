@@ -421,7 +421,7 @@ class BrewListTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text(appointmentBooking.docName,
+                    Text(appointmentBooking.patName,
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 18.0,

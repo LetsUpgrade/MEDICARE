@@ -77,7 +77,7 @@ class DatabaseService {
              docName: doc.data['docName'] ?? '',
              docSpecialization:  doc.data['docSpecialization'] ?? '0',
              patUid: doc.data['patUid'] ?? '0',
-             patName: snapshot.toString(),
+             patName: doc.data['patName'] ?? '0',
              time: doc.data['time'] ?? '0'
          );
 
